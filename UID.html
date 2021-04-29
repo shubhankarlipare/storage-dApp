@@ -1,0 +1,115 @@
+<html>
+<head>
+	<title>UID Registration</title>
+
+<style>
+h1 {text-align: center;}
+h2 {text-align: center;}
+h3 {text-align: center;}
+p {text-align: center;}
+div {text-align: center;}
+</style>
+
+</head>
+<body>
+
+<h1><center>UID Registration</h1>
+
+<div><center>
+	<h3>Enter Name: </h3> <input id="inputName" type="text">
+	<button type="button" onClick="SubmitName()">Submit Name</button>
+</center></div>
+
+<div><center>
+	<h3>Search UID: </h3> <input id="inputId" type="text">
+	<button type="button" onClick="SearchUID()">SearchUID</button>
+</center></div>
+
+<h2 id= "uid"> your uid </h2>
+<h2 id= "name"> your name </h2>
+
+<!-- <script src="./node_modules/web3/dist/web3.min.js"></script> --> 
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+
+<script>
+	
+	var ContractAddress = "0xEC5D3FF1D7D86866836C526c2f9Ec7d5bf479f6C";
+	var ContractAbi = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "setUID",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "idd",
+				"type": "uint256"
+			}
+		],
+		"name": "getUID",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+		
+var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
+
+var contract = new web3.eth.Contract(ContractAbi, ContractAddress);
+
+
+function SubmitName(){
+
+	var inputName = document.getElementById("inputName").value;
+	web3.eth.getAccounts().then(
+		function(accounts){
+			contract.methods.setUID(inputName).send({from:accounts[0]});
+		}
+		);
+
+}
+
+function SearchUID(){
+
+	var inputID = document.getElementById("inputId").value;
+	contract.methods.getUID(inputID).call(
+		function(error, result){
+		document.getElementById("uid").innerHTML = result[0];
+		document.getElementById("name").innerHTML = result[1];	
+		}
+		);
+}
+
+
+
+
+
+</script>
+	
+
+
+</body>
+</html>
